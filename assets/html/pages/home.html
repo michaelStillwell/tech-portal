@@ -9,7 +9,11 @@
 	<h3 hx-get="/actions/hello" hx-swap="innerHTML" hx-trigger="load"></h3>
 	<div hx-get="/actions/test" hx-swap="innerHTML" hx-trigger="load"></div>
 
-	<button class="btn w-64 rounded-full">Button</button>
+	<form hx-post="/actions/login">
+		<input value="user@user2.com" name="username"/>
+		<input value="user@user2.com" name="password"/>
+		<button class="btn w-64 rounded-full" >Button</button>
+	</form>
 
 	<ul>
 	{% for site in sites %}

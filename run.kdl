@@ -1,0 +1,25 @@
+layout {
+	tab name="running" {
+		pane size=1 borderless=true {
+			plugin location="zjstatus" 
+		}
+
+		pane split_direction="vertical" {
+			pane size="60%" start_suspended=true focus=true {
+				command "cargo"
+				args "shuttle" "run"
+			}
+
+			pane {
+				pane size="80%" {
+					command "cargo"
+					args "watch" "-w" "src" "-x" "check" "-x" "test" 
+				}
+
+				pane {
+					command "./test.sh"
+				}
+			}
+		}
+	}
+}
