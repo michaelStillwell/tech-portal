@@ -8,4 +8,12 @@
 
 	<h3 hx-get="/actions/hello" hx-swap="innerHTML" hx-trigger="load"></h3>
 	<div hx-get="/actions/test" hx-swap="innerHTML" hx-trigger="load"></div>
+
+	<button class="btn w-64 rounded-full">Button</button>
+
+	<ul>
+	{% for site in sites %}
+		<li>{{ site.name }}</li>
+	{% endfor %}
+	</ul>
 {% endblock %}

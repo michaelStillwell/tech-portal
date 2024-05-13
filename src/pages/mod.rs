@@ -1,25 +1,15 @@
-use askama::Template;
-use askama_axum::IntoResponse;
-use axum::{
-    extract::State,
-    routing::{get, Router},
-    Json,
-};
-use tracing::info;
+use rocket::{routes, Route};
 
-use crate::{AppState, Routes};
+mod home;
+mod login;
+mod events;
 
-#[derive(Template)]
-#[template(path = "pages/hello.html")]
-pub struct HomeTemplate;
-
-pub async fn home(State(state): State<AppState>) -> HomeTemplate {
-    info!("hitting home");
-    let _conn = state.db.connect().unwrap();
-    HomeTemplate
-}
-
-pub fn routes() -> Routes {
-    Router::new()
-        .route("/", get(home))
+pub fn routes() -> Vec<Route> {
+    routes![
+        home::home_page,
+        events::events_page,
+        events::edit_event_page,
+        login::login_page,
+        login::login_page_with_session
+    ]
 }

@@ -1,61 +1,35 @@
-use std::sync::Arc;
-
-use axum::Router;
-use dotenv;
-use libsql::{Database, Row};
+use db::{init_db, Db};
+use libsql::Database;
+use rocket::fs::FileServer;
 use shuttle_runtime::SecretStore;
-use tower_http::services::ServeDir;
-use tracing::info;
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 mod actions;
+mod auth;
+mod catchers;
+mod db;
 mod pages;
 
-pub type Db = Arc<Database>;
-
-#[derive(Clone)]
 pub struct AppState {
     db: Db,
 }
-
-pub type Routes = Router<AppState>;
 
 #[shuttle_runtime::main]
 async fn main(
     #[shuttle_runtime::Secrets] _store: SecretStore,
     #[shuttle_turso::Turso(addr = "{secrets.TURSO_ADDR}", token = "{secrets.TURSO_TOKEN}")]
-    db: Database,
-) -> shuttle_axum::ShuttleAxum {
-    let db = Arc::new(db);
+    database: Database,
+) -> shuttle_rocket::ShuttleRocket {
     dotenv::dotenv().ok();
 
-    info!("initializing router...");
+    let db = init_db(database).await;
+    let app = AppState { db };
 
-    let assets_path = std::env::current_dir().unwrap();
+    let rocket = rocket::build()
+        .mount("/", pages::routes())
+        .mount("/actions", actions::routes())
+        .mount("/assets", FileServer::from("assets"))
+        .register("/", catchers::catchers())
+        .manage(app);
 
-    let state = AppState { db };
-    let mut router = Router::new()
-        .nest("/", pages::routes())
-        .nest("/actions", actions::routes())
-        .nest_service(
-            "/assets",
-            ServeDir::new(format!("{}/assets", assets_path.to_str().unwrap())),
-        )
-        .with_state(state);
-
-    if cfg!(debug_assertions) {
-        router = router.layer(tower_livereload::LiveReloadLayer::new());
-    }
-
-    Ok(router.into())
-}
-
-// NOTE: a first thought about general serialization
-async fn _test(client: Database, action: fn(Row)) {
-    let conn = client.connect().unwrap();
-    let mut results = conn.query("SELECT * FROM items", ()).await.unwrap();
-
-    while let Some(row) = results.next().await.unwrap() {
-        action(row);
-    }
+    Ok(rocket.into())
 }

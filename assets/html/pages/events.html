@@ -1,0 +1,19 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+	{% include "components/hero.html" %}
+	<h1>Events</h1>
+
+	<button class="btn">Hello</button>
+
+	<ul>
+	{% for event in events %}
+		<li><a href="/event/{{ event.event_id }}">{{ event.name }}</a></li>
+	{% endfor %}
+	</ul>
+{% endblock %}
+
+<div id="modal">
+</div>

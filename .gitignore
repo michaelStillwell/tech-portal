@@ -2,3 +2,4 @@
 .env
 Secrets.*
 *.db
+**/node_modules

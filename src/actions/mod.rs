@@ -1,22 +1,21 @@
+use crate::actions::events::edit_event_action;
+use crate::actions::login::login_action;
 use askama::Template;
-use axum::{routing::get, Router};
+use rocket::routes;
+use rocket::{get, Route};
 
-use crate::Routes;
+mod login;
+mod events;
 
-pub async fn hello() -> &'static str {
-    "Hello"
+pub fn routes() -> Vec<Route> {
+    routes![login_action, edit_event_action, test_action]
 }
 
 #[derive(Template)]
 #[template(path = "components/test.html")]
-pub struct TestComponent;
+struct TestComponent;
 
-pub async fn test_action() -> TestComponent {
+#[get("/test")]
+fn test_action() -> TestComponent {
     TestComponent
-}
-
-pub fn routes() -> Routes {
-    Router::new()
-    .route("/hello", get(hello))
-    .route("/test", get(test_action))
 }

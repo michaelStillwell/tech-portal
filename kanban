@@ -1,0 +1,26 @@
+Tech Portal
+	todo
+		add the cookie key to secrets
+
+		place the domain on the cookie
+		remove all unwraps
+		add a dberror enum for user
+		implement the file upload
+	doing
+		implement event crud
+	done
+		finalized the login flow
+			- the session is required when asked
+			- a redirect_url will be placed if accessing a route without session
+			- login will respect the presence of a redirect_url and go there when authed
+			
+			the session to be present and redirects to login if not
+			
+			
+		reorganize the code base
+		implement the db
+			i have implemented the initial tables, users and sites. just need to figure
+			out what i actually want to
+			
+			includes the schema and the queries
+		remove the cdn and replace with build setup
