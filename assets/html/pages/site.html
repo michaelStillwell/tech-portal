@@ -1,0 +1,75 @@
+{% import "components/event.html" as event %}
+
+{% extends "layouts/base.html" %}
+
+{% block title %}Site {{ site.name }}{% endblock %}
+
+{% block content %}
+<h1>Site</h1>
+<table class="table">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Description</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody id="events">
+		<a href="/site/{{ site.site_id }}/events/new" class="btn">Add Event</a>
+		{% for evt in events %}
+			{% call event::event(evt) %}
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock %}
+
+{% macro add_event() %}
+<tr id="first-event">
+	<form 
+		id="add-event"
+		hx-post="/site/{{ site.site_id }}/events" 
+		hx-target="#first-event"
+		hx-target-40*="#add-error"
+		hx-swap="afterend" 
+		class="flex flex-col gap-2"></form>
+	<td>
+		<label class="form-control w-full max-w-xs">
+			<input 
+				id="event-name"
+				placeholder="Name" 
+				name="name" 
+				required 
+				form="add-event"
+				hx-on:input="clearInnerHtml('add-error')"/>
+			<div class="label">
+				<span id="add-error" class="text-error label-text-alt"></span>
+			</div>
+		</label>
+	</td>
+	<td>
+	<textarea 
+		id="event-description"
+		placeholder="Description" 
+		name="description"
+		form="add-event"
+		hx-on:input="clearInnerHtml('add-error')"></textarea>
+	</td>
+	<td>
+		<button 
+			type="submit" 
+			class="btn btn-primary" 
+			form="add-event"
+		>
+			Create
+		</button>
+		<button 
+			type="submit" 
+			class="btn btn-neutral" 
+			onclick="clearInput('event-name');clearInput('event-description')"
+		>
+			Cancel
+		</button>
+	</td>
+</tr>
+{% endmacro %}
+

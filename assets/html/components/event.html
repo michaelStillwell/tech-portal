@@ -1,0 +1,12 @@
+{% macro event(evt) %}
+<tr>
+	<td>{{ evt.name }}</td>
+	<td>{{ evt.description }}</td>
+	<td>
+		<button class="btn btn-secondary">Edit</button>
+		<button class="btn btn-error">Delete</button>
+	</td>
+</tr>
+{% endmacro %}
+
+{% call event(event) %}
